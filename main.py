@@ -13,31 +13,21 @@ logger = logging.getLogger(name=__name__)
 logger.addHandler(handler)
 
 
-# fd = file descriptor
-# What is a File Descriptor? - https://en.wikipedia.org/wiki/File_descriptor
-# More:
-# - https://docs.python.org/3/library/os.html#os.open
-# - https://docs.python.org/3/library/os.html#os.close
-# - https://stackoverflow.com/questions/15039528/what-is-the-difference-between-os-open-and-os-fdopen
 def main() -> None:
-    path = os.curdir + "/messages1.txt"
-    fd = None
+    path = os.curdir + "/messages.txt"
     try:
-        fd = os.open(path, flags=os.O_RDONLY)  # os.O_RDONLY -- Open the file as ReadOnly
-        # os.O_WRONLY: Write only; os.O_RDWR: Read & write, os.O_CREAT: Create if not exist.
-        # Read the data 8 bytes at a time
-        while True:
-            data = os.read(fd, 8).decode("utf-8")
-            if not data:
-                break
-            print("read: {data}".format(data=data))
+        # Read file line by line
+        with open(file=path) as f:
+            while True:
+                line = f.readline().strip()
+                if not line:
+                    # returns an empty string
+                    break
+                print("read: {data}".format(data=line))
     except FileNotFoundError:
         logger.error("File Not Found at path: {}%".format(path))
     except Exception as e:
         logger.exception(e)
-    finally:
-        if fd:
-            os.close(fd)
 
 
 if __name__ == "__main__":
