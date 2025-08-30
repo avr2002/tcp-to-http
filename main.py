@@ -17,13 +17,9 @@ def main() -> None:
     path = os.curdir + "/messages.txt"
     try:
         # Read file line by line
-        with open(file=path) as f:
-            while True:
-                line = f.readline().strip()
-                if not line:
-                    # returns an empty string
-                    break
-                print("read: {data}".format(data=line))
+        with open(file=path, encoding="utf-8") as f:
+            for line in f:
+                print("read: {data}".format(data=line.strip()))
     except FileNotFoundError:
         logger.error("File Not Found at path: {}%".format(path))
     except Exception as e:
