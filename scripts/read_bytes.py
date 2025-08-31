@@ -7,6 +7,7 @@ Learned about:
 
 import logging
 import os
+import sys
 
 formatter = logging.Formatter(
     # fmt="%(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(name)s:%(funcName)s | %(message)s",
@@ -28,10 +29,9 @@ logger.addHandler(handler)
 # - https://stackoverflow.com/questions/15039528/what-is-the-difference-between-os-open-and-os-fdopen
 def main() -> None:
     path = os.curdir + "/messages.txt"
-    fd = None
+    fd = os.open(path, flags=os.O_RDONLY)  # os.O_RDONLY -- Open the file as ReadOnly
+    # os.O_WRONLY: Write only; os.O_RDWR: Read & write, os.O_CREAT: Create if not exist.
     try:
-        fd = os.open(path, flags=os.O_RDONLY)  # os.O_RDONLY -- Open the file as ReadOnly
-        # os.O_WRONLY: Write only; os.O_RDWR: Read & write, os.O_CREAT: Create if not exist.
         # Read the data 8 bytes at a time
         while True:
             data = os.read(fd, 8).decode("utf-8")
@@ -41,11 +41,11 @@ def main() -> None:
             print("read: {data}".format(data=data))
     except FileNotFoundError:
         logger.error("File Not Found at path: {}%".format(path))
+        sys.exit(0)
     except Exception as e:
         logger.exception(e)
     finally:
-        if fd:
-            os.close(fd)
+        os.close(fd)
 
 
 if __name__ == "__main__":
